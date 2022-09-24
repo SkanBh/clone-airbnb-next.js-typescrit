@@ -18,7 +18,7 @@ const Header = () => {
       </svg>
       <div className="flex flex-col">
         <span className="text-sm font-semibold">Where to?</span>
-        <span>
+        <span className="-mt-1">
           <span className="text-xs text-gray-500 mr-1">Anywhere</span>
           <span className="text-xs text-gray-500 mr-1">. Any week</span>
           <span className="text-xs text-gray-500">. Add guests</span>
