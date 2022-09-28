@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconContext } from "react-icons";
 import { FaTimes, FaSearch } from "react-icons/fa";
+import CardDestination from "../atoms/cardDestination";
+import ListDestinationCard from "./ListDestinationCard";
 const styleCheckedItem =
   "relative after:absolute after:left-0 after:-bottom-1 after:w-full after:h-[2px] after:bg-black text-black";
 const SearchBarMobile = () => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const [checkedTab, setCheckedTab] = useState("stays");
   const [activeSection, setActiveSection] = useState("where");
+  const [activeDestionation, setActiveDestination] = useState("I’m flexible");
+  useEffect(() => {
+    console.log("activeSection :>> ", activeSection);
+  });
+  const handleClick = (destination: string) => {
+    setActiveDestination(destination);
+    setActiveSection("when");
+  };
   return (
     <>
       <div
@@ -92,10 +102,12 @@ const SearchBarMobile = () => {
         <div className="flex flex-col mx-5 space-y-3">
           <section
             className="bg-white rounded-2xl border border-gray-200 py-5 cursor-pointer px-4"
-            onClick={() => setActiveSection("where")}
+            onClick={() =>
+              activeSection !== "where" && setActiveSection("where")
+            }
           >
             {activeSection === "where" ? (
-              <div>
+              <>
                 <div className="font-bold text-[22px] text-gray-900 mb-4">
                   Where to ?
                 </div>
@@ -110,24 +122,12 @@ const SearchBarMobile = () => {
                   </span>
                 </div>
                 <div className="flex space-x-4 flex-nowrap overflow-auto scroll-horizontal scroll-smooth">
-                  <div className="w-[132px] h-40 flex flex-col p-1 flex-shrink-0">
-                    <button className="h-[124px] h-[124px] rounded-lg border-2 border-gray-900 mb-auto"></button>
-                    <span>I'm flexible</span>
-                  </div>
-                  <div className="w-[132px] h-40 flex flex-col p-1 flex-shrink-0">
-                    <button className="h-[124px] h-[124px] rounded-lg border-2 border-gray-900 mb-auto"></button>
-                    <span>I'm flexible</span>
-                  </div>
-                  <div className="w-[132px] h-40 flex flex-col p-1 flex-shrink-0">
-                    <button className="h-[124px] h-[124px] rounded-lg border-2 border-gray-900 mb-auto"></button>
-                    <span>I'm flexible</span>
-                  </div>
-                  <div className="w-[132px] h-40 flex flex-col p-1 flex-shrink-0">
-                    <button className="h-[124px] h-[124px] rounded-lg border-2 border-gray-900 mb-auto"></button>
-                    <span>I'm flexible</span>
-                  </div>
+                  <ListDestinationCard
+                    activeDestination={activeDestionation}
+                    handleClick={handleClick}
+                  />
                 </div>
-              </div>
+              </>
             ) : (
               <div className="flex items-center justify-between ">
                 <span className="text-sm font-semibold text-gray-500">
