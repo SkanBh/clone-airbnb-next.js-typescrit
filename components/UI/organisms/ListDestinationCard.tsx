@@ -54,7 +54,7 @@ const ListDestinationCard = ({ activeDestination, handleClick }: Props) => {
           key={index}
           title={title}
           url={url}
-          active={title === activeDestination}
+          active={title === (activeDestination || destinations[0].title)}
           handleClick={handleClick}
         />
       ))}

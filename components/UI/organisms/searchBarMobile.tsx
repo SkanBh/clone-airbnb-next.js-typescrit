@@ -1,22 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { IconContext } from "react-icons";
-import { FaTimes, FaSearch } from "react-icons/fa";
-import CardDestination from "../atoms/cardDestination";
+import { FaTimes, FaSearch, FaMapMarked, FaArrowLeft } from "react-icons/fa";
+import InputSearch from "../molecules/InputSearch";
 import ListDestinationCard from "./ListDestinationCard";
 const styleCheckedItem =
   "relative after:absolute after:left-0 after:-bottom-1 after:w-full after:h-[2px] after:bg-black text-black";
+const list = [
+  "Toulouse",
+  "Tulum,Mexico",
+  "Toronto, On",
+  "Thailand",
+  "Tokyo, Japan",
+];
 const SearchBarMobile = () => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const [checkedTab, setCheckedTab] = useState("stays");
   const [activeSection, setActiveSection] = useState("where");
-  const [activeDestionation, setActiveDestination] = useState("I’m flexible");
-  useEffect(() => {
-    console.log("activeSection :>> ", activeSection);
-  });
+  const [activeDestination, setActiveDestination] = useState("");
+  const [displaySearchList, setDisplaySearchList] = useState(false);
   const handleClick = (destination: string) => {
+    setSearchDestination("");
     setActiveDestination(destination);
     setActiveSection("when");
   };
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) =>
+    setDisplaySearchList(true);
+  const handleClear = () => {
+    setSearchDestination("");
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchDestination(e.target.value);
+  };
+  const [searchDestination, setSearchDestination] = useState("");
   return (
     <>
       <div
@@ -68,10 +83,14 @@ const SearchBarMobile = () => {
           {/* closed button */}
           <button
             className="rounded-full border-gray-600 border h-8 w-8 grid place-items-center"
-            onClick={() => setDisplayMenu(false)}
+            onClick={() =>
+              displaySearchList
+                ? setDisplaySearchList(false)
+                : setDisplayMenu(false)
+            }
           >
             <IconContext.Provider value={{ className: "h-3 w-3" }}>
-              <FaTimes />
+              {displaySearchList ? <FaArrowLeft /> : <FaTimes />}
             </IconContext.Provider>
           </button>
           {/* end close button */}
@@ -107,33 +126,68 @@ const SearchBarMobile = () => {
             }
           >
             {activeSection === "where" ? (
-              <>
+              <div>
                 <div className="font-bold text-[22px] text-gray-900 mb-4">
                   Where to ?
                 </div>
-                <div className="relative mb-4">
-                  <input
-                    placeholder="Search destinations"
-                    type="search"
-                    className="h-[60px] border border-gray-200 rounded-lg w-full indent-14 placeholder:text-gray-500 outline-none"
-                  />
-                  <span className="absolute left-7 top-[36%] mt-[2px]">
-                    <FaSearch />
-                  </span>
-                </div>
+                <InputSearch
+                  classes="mb-4"
+                  value={activeDestination}
+                  handleFocus={handleFocus}
+                />
                 <div className="flex space-x-4 flex-nowrap overflow-auto scroll-horizontal scroll-smooth">
                   <ListDestinationCard
-                    activeDestination={activeDestionation}
+                    activeDestination={activeDestination}
                     handleClick={handleClick}
                   />
                 </div>
-              </>
+                {displaySearchList && (
+                  <div className="fixed bottom-0 top-[4.5rem] rounded-3xl border border-gray-300 bg-white left-0 w-screen z-10 px-4">
+                    <InputSearch
+                      classes="my-6"
+                      value={searchDestination}
+                      handleClear={handleClear}
+                      handleChange={handleChange}
+                      displayClearButton
+                    />
+                    <div className="flex flex-col space-y-4">
+                      {list
+                        .filter(
+                          (destination) =>
+                            searchDestination &&
+                            destination
+                              .toLocaleLowerCase()
+                              .includes(searchDestination.toLocaleLowerCase())
+                        )
+                        .map((destination) => (
+                          <button
+                            className="flex  items-center"
+                            key={destination}
+                            onClick={() => {
+                              setActiveDestination(destination);
+                              setDisplaySearchList(false);
+                              setActiveSection("when");
+                              setSearchDestination("");
+                            }}
+                          >
+                            <div className="h-12 w-12 bg-searchBarMenu rounded-lg grid place-items-center mr-4">
+                              <FaMapMarked />
+                            </div>
+                            <span>{destination}</span>
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="flex items-center justify-between ">
                 <span className="text-sm font-semibold text-gray-500">
                   Where
                 </span>
-                <span className="text-sm font-semibold">I'm flexible</span>
+                <span className="text-sm font-semibold">
+                  {activeDestination || "I'm flexible"}
+                </span>
               </div>
             )}
           </section>
